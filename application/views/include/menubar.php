@@ -570,13 +570,13 @@ function checkprivilege($arraymenu, $menuID, $type){
             <?php } if(menucheck($menuprivilegearray, 24)==1 | menucheck($menuprivilegearray, 25)==1 | menucheck($menuprivilegearray, 28)==1 | menucheck($menuprivilegearray, 29)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseproductinfo" aria-expanded="false" aria-controls="collapseproductinfo">
                 <div class="nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                Finish Good
+                Product
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
             <div class="collapse <?php if($controllermenu=="Product" | $controllermenu=="Finishgoodbom"){echo 'show';} ?>" id="collapseproductinfo" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <?php if(menucheck($menuprivilegearray, 24)==1){ ?>
-                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Product'; ?>">Finish Good</a>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Product'; ?>">Product</a>
                     <?php } if(menucheck($menuprivilegearray, 25)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'ProductCategory'; ?>">Product Category</a> 
                     <?php } if(menucheck($menuprivilegearray, 28)==1){ ?>
