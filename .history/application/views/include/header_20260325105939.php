@@ -23,7 +23,7 @@ function menucheck($arraymenu, $menuID){
         <title>Mico Ceylon Organics - By Erav Technology</title>
         <link href="<?php echo base_url() ?>assets/css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
-        <link rel="icon" type="image/x-icon" href="<?php echo base_url() ?>images/logo.png" />
+        <link rel="icon" type="image/x-icon" href="<?php echo base_url() ?>images/favicon.png" />
         <script data-search-pseudo-elements defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js"></script>
         <!-- Datepicker CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
