@@ -6,7 +6,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-4">
                         <div class="card shadow-lg rounded-0 mt-5">
-                            <div class="card-header justify-content-center bg-transparent"><img src="<?php echo base_url() ?>images/logo.png" class="img-fluid" alt=""></div>
+                            <div class="card-header justify-content-center bg-transparent"><img src="<?php echo base_url() ?>images/l;ogo.png" class="img-fluid" alt=""></div>
                             <div class="card-body pt-3">
                                 <form action="<?php echo base_url() ?>Welcome/LoginUser" method="post" autocomplete="off">
                                     <div class="form-group mb-1">
