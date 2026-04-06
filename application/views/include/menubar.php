@@ -472,6 +472,37 @@ else if($controllermenu=='Invoicecostsheet'){
     $statuscheck=checkprivilege($menuprivilegearray, 77, 3);
     $deletecheck=checkprivilege($menuprivilegearray, 77, 4);
 }
+else if($controllermenu=='Fruittype'){
+    $addcheck=checkprivilege($menuprivilegearray, 78, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 78, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 78, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 78, 4);
+}
+else if($controllermenu=='IncomingMaterialVehicle'){
+    $addcheck=checkprivilege($menuprivilegearray, 79, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 79, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 79, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 79, 4);
+}
+else if($controllermenu=='Productionwastage'){
+    $addcheck=checkprivilege($menuprivilegearray, 80, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 80, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 80, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 80, 4);
+}
+else if($controllermenu=='Drier'){
+    $addcheck=checkprivilege($menuprivilegearray, 81, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 81, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 81, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 81, 4);
+}
+else if($controllermenu=='WaterBath'){
+    $addcheck=checkprivilege($menuprivilegearray, 82, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 82, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 82, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 82, 4);
+}
+
 
 function checkprivilege($arraymenu, $menuID, $type){
     foreach($arraymenu as $array){
@@ -550,6 +581,32 @@ function checkprivilege($arraymenu, $menuID, $type){
                 <div class="nav-link-icon"><i class="fas fa-users"></i></div>
                 Supplier
             </a>
+            <?php } if(menucheck($menuprivilegearray, 78)==1){ ?> 
+            <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'Fruittype'; ?>">
+                <div class="nav-link-icon"><i class="fas fa-shopping-basket"></i></div>
+                Fruit type
+            </a>
+            <?php } if(menucheck($menuprivilegearray, 79)==1){ ?> 
+            <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'IncomingMaterialVehicle'; ?>">
+                <div class="nav-link-icon"><i class="fas fa-car"></i></div>
+                Incoming Material Vehicle
+            </a>
+            <?php } if(menucheck($menuprivilegearray, 80)==1){ ?> 
+            <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'Productionwastage'; ?>">
+                <div class="nav-link-icon"><i class="fas fa-shopping-basket"></i></div>
+                Production Wastage 
+            </a>
+            <?php } if(menucheck($menuprivilegearray, 81)==1){ ?> 
+            <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'Drier'; ?>">
+                <div class="nav-link-icon"><i class="fas fa-wind"></i></div>
+                Drier
+            </a>
+            <?php } if(menucheck($menuprivilegearray, 82)==1){ ?> 
+            <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'WaterBath'; ?>">
+                <div class="nav-link-icon"><i class="fas fa-water"></i></div>
+                Water Bath
+            </a>
+            
             <?php } if(menucheck($menuprivilegearray, 4)==1 | menucheck($menuprivilegearray, 11)==1 | menucheck($menuprivilegearray, 13)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseMaterialinfo" aria-expanded="false" aria-controls="collapseMaterialinfo">
                 <div class="nav-link-icon"><i class="fas fa-shopping-basket"></i></div>

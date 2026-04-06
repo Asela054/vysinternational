@@ -403,7 +403,7 @@ class Goodreceiveinfo extends CI_Model{
         $recordID=$this->input->post('recordID');
 
         if(!empty( $recordID)){
-            $this->db->select('tbl_supplier.`suppliercode`, tbl_material_category.categorycode');
+            $this->db->select('tbl_supplier.`supcode`, tbl_material_category.categorycode');
             $this->db->from('tbl_supplier');
             $this->db->join('tbl_supplier_has_tbl_material_category', 'tbl_supplier_has_tbl_material_category.tbl_supplier_idtbl_supplier = tbl_supplier.idtbl_supplier', 'left');
             $this->db->join('tbl_material_category', 'tbl_material_category.idtbl_material_category = tbl_supplier_has_tbl_material_category.tbl_material_category_idtbl_material_category', 'left');
@@ -414,7 +414,7 @@ class Goodreceiveinfo extends CI_Model{
 
             // print_r($this->db->last_query());    
             $materialcode=$responddetail->row(0)->categorycode;
-            $suppliercode=$responddetail->row(0)->suppliercode;
+            $suppliercode=$responddetail->row(0)->supcode;
 
             $sql="SELECT COUNT(*) AS `count` FROM `tbl_grn`";
             $respond=$this->db->query($sql);
