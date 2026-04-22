@@ -502,12 +502,6 @@ else if($controllermenu=='WaterBath'){
     $statuscheck=checkprivilege($menuprivilegearray, 82, 3);
     $deletecheck=checkprivilege($menuprivilegearray, 82, 4);
 }
-else if($controllermenu=='Itemprofileparameters'){
-    $addcheck=checkprivilege($menuprivilegearray, 83, 1);
-    $editcheck=checkprivilege($menuprivilegearray, 83, 2);
-    $statuscheck=checkprivilege($menuprivilegearray, 83, 3);
-    $deletecheck=checkprivilege($menuprivilegearray, 83, 4);
-}
 
 
 function checkprivilege($arraymenu, $menuID, $type){
@@ -824,18 +818,22 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <?php //} ?>
                 </nav>
             </div> -->
-            <?php } if(menucheck($menuprivilegearray, 34)==1 | menucheck($menuprivilegearray, 38)==1 | menucheck($menuprivilegearray, 83)==1 | menucheck($menuprivilegearray, 67)==1){ ?>
+            <?php } if(menucheck($menuprivilegearray, 34)==1 | menucheck($menuprivilegearray, 38)==1 | menucheck($menuprivilegearray, 39)==1 | menucheck($menuprivilegearray, 67)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseOthers" aria-expanded="false" aria-controls="collapseOthers">
                 <div class="nav-link-icon"><i class="fas fa-list"></i></div>
                 Others
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Ordertype" | $controllermenu=="Qualitycategory" | $controllermenu=="Itemprofileparameters" | $controllermenu=="Returntype"){echo 'show';} ?>" id="collapseOthers" data-parent="#accordionSidenav">
+            <div class="collapse <?php if($controllermenu=="Ordertype" | $controllermenu=="Qualitycategory" | $controllermenu=="Qualitysubcategory" | $controllermenu=="Returntype"){echo 'show';} ?>" id="collapseOthers" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <?php if(menucheck($menuprivilegearray, 34)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Ordertype'; ?>">Order Type</a>
-                    <?php } if(menucheck($menuprivilegearray, 83)==1){ ?>
-                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Itemprofileparameters'; ?>">Item Profile Parameters</a>
+                    <!-- <?php //} if(menucheck($menuprivilegearray, 67)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Returntype'; ?>">Return Type</a>
+                    <?php //} if(menucheck($menuprivilegearray, 38)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Qualitycategory'; ?>">Quality Category</a>
+                    <?php } if(menucheck($menuprivilegearray, 39)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Qualitysubcategory'; ?>">Quality Subcategory</a> -->
                     <?php } ?>
                 </nav>
             </div>

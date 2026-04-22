@@ -492,47 +492,6 @@ include "include/topnavbar.php";
         		}
         	});
         });
-		$('#productdataTable tbody').on('click', '.btnViewProfile', function () {
-			var id = $(this).attr('id');
-
-			// Show loading modal
-			Swal.fire({
-				title: 'Loading Profile...',
-				html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
-				allowOutsideClick: false,
-				showConfirmButton: false,
-				backdrop: 'rgba(255, 255, 255, 0.5)',
-				customClass: {
-					popup: 'fullscreen-swal'
-				},
-				didOpen: () => {
-					document.body.style.overflow = 'hidden';
-
-					$.ajax({
-						type: "POST",
-						data: {
-							productid: id
-						},
-						url: '<?php echo base_url() ?>Product/Productconditionprofile',
-						success: function (result) {
-							Swal.close();
-							$('#viewinfo').html(result);
-							$('#viewFinishGood').modal('show');
-						},
-						error: function(error) {
-							Swal.close();
-							Swal.fire({
-								icon: 'error',
-								title: 'Error',
-								text: 'Failed to load item profile. Please try again.'
-							});
-						}
-					});
-
-					document.body.style.overflow = 'visible';
-				}
-			});
-		});
 		$('#btnapplyquality').click(function(){
 			var formData = new FormData($('#qualityform')[0]);
 

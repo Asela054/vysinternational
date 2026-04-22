@@ -502,7 +502,7 @@ else if($controllermenu=='WaterBath'){
     $statuscheck=checkprivilege($menuprivilegearray, 82, 3);
     $deletecheck=checkprivilege($menuprivilegearray, 82, 4);
 }
-else if($controllermenu=='Itemprofileparameters'){
+else if($controllermenu=='Qualitysubacategory'){
     $addcheck=checkprivilege($menuprivilegearray, 83, 1);
     $editcheck=checkprivilege($menuprivilegearray, 83, 2);
     $statuscheck=checkprivilege($menuprivilegearray, 83, 3);
@@ -830,12 +830,12 @@ function checkprivilege($arraymenu, $menuID, $type){
                 Others
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="Ordertype" | $controllermenu=="Qualitycategory" | $controllermenu=="Itemprofileparameters" | $controllermenu=="Returntype"){echo 'show';} ?>" id="collapseOthers" data-parent="#accordionSidenav">
+            <div class="collapse <?php if($controllermenu=="Ordertype" | $controllermenu=="Qualitycategory" | $controllermenu=="Qualitysubcategory" | $controllermenu=="Returntype"){echo 'show';} ?>" id="collapseOthers" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <?php if(menucheck($menuprivilegearray, 34)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Ordertype'; ?>">Order Type</a>
                     <?php } if(menucheck($menuprivilegearray, 83)==1){ ?>
-                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Itemprofileparameters'; ?>">Item Profile Parameters</a>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Qualitysubcategory'; ?>">Item Profile Parameters</a>
                     <?php } ?>
                 </nav>
             </div>

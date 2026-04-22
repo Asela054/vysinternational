@@ -905,11 +905,13 @@ class Productinfo extends CI_Model{
     public function Productconditionprofile(){
         $product_id = $this->input->post('productid');
 
+        // Get product information
         $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
                         FROM `tbl_product`
                         WHERE `idtbl_product` = ? AND `status` = 1";
         $product = $this->db->query($sql_product, array($product_id))->row();
 
+        // Get quality conditions
         $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
                           FROM `tbl_product_condition`
                           WHERE `tbl_product_idtbl_product` = ? AND `status` = 1
@@ -917,9 +919,12 @@ class Productinfo extends CI_Model{
         $conditions = $this->db->query($sql_conditions, array($product_id))->result();
 
         $html = '';
+
+        // Professional Item Profile Layout
         $html .= '<div class="container-fluid">';
         $html .= '<div class="row">';
 
+        // Product Header Section
         $html .= '<div class="col-12 mb-4">';
         $html .= '<div class="card shadow-lg border-0">';
         $html .= '<div class="card-header bg-gradient-primary text-white">';

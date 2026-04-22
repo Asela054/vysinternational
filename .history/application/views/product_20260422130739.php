@@ -311,35 +311,6 @@ include "include/topnavbar.php";
 		</div>
 	</div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="porderviewmodal" data-backdrop="static" data-keyboard="false" tabindex="-1"
-	aria-labelledby="staticBackdropLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h2 class="modal-title" id="staticBackdropLabel">ADD ITEM CONDITION</h2>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-12">
-						<form id="qualityform">
-							<div id="formlayer"></div>
-							<div class="form-row text-right">
-								<div class="col mt-3">
-									<button type="button" class="btn btn-primary btn-sm" id="btnapplyquality">APPLY</button>
-								</div>
-							</div>
-                            <input type="hidden" name="hideproductid" id="hideproductid">
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 <?php include "include/footerscripts.php"; ?>
 <script>
 	$(document).ready(function () {
@@ -423,8 +394,7 @@ include "include/topnavbar.php";
 					"render": function (data, type, full) {
 						var button = '';
 						button+='<button class="btn btn-dark btn-sm btnViewFinishGood mr-1" data-toggle="tooltip" data-placement="bottom" title="Cost Info" id="'+full['idtbl_product']+'"><i class="fas fa-file"></i></button>';
-						button+='<button type="button" class="btn btn-secondary btn-sm btncheck mr-1" data-toggle="tooltip" data-placement="bottom" title="Quality Check" id="'+full['idtbl_product']+'"><i class="fas fa-tasks"></i></button>';
-						button+='<button type="button" class="btn btn-info btn-sm btnViewProfile mr-1" data-toggle="tooltip" data-placement="bottom" title="View Profile" id="'+full['idtbl_product']+'"><i class="fas fa-eye"></i></button>';
+						button+='<button type="button" class="btn btn-secondary btn-sm btncheck mr-1" id="'+full['idtbl_grn']+'"><i class="fas fa-tasks"></i></button>';
 						// button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
                         // button += '<a href="<?php echo base_url() ?>Product/Barcode/'+full['productcode']+'" class="btn btn-dark btn-sm mr-1" target="_blank"><i class="fas fa-barcode"></i></a>';
 						if (editcheck == 1) {
@@ -475,16 +445,16 @@ include "include/topnavbar.php";
 				});
 			}
 		});
-		$('#productdataTable tbody').on('click', '.btncheck', function () {
+		$('#dataTable tbody').on('click', '.btncheck', function () {
         	var id = $(this).attr('id');
-        	$('#hideproductid').val(id);
+        	$('#hidegrnid').val(id);
 
         	$.ajax({
         		type: "POST",
         		data: {
         			recordID: id
         		},
-        		url: '<?php echo base_url() ?>Product/Productconditionform',
+        		url: '<?php echo base_url() ?>Qualitycheck/GRNqualityform',
         		success: function (result) {
 
         			$('#formlayer').html(result);
@@ -492,93 +462,7 @@ include "include/topnavbar.php";
         		}
         	});
         });
-		$('#productdataTable tbody').on('click', '.btnViewProfile', function () {
-			var id = $(this).attr('id');
 
-			// Show loading modal
-			Swal.fire({
-				title: 'Loading Profile...',
-				html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
-				allowOutsideClick: false,
-				showConfirmButton: false,
-				backdrop: 'rgba(255, 255, 255, 0.5)',
-				customClass: {
-					popup: 'fullscreen-swal'
-				},
-				didOpen: () => {
-					document.body.style.overflow = 'hidden';
-
-					$.ajax({
-						type: "POST",
-						data: {
-							productid: id
-						},
-						url: '<?php echo base_url() ?>Product/Productconditionprofile',
-						success: function (result) {
-							Swal.close();
-							$('#viewinfo').html(result);
-							$('#viewFinishGood').modal('show');
-						},
-						error: function(error) {
-							Swal.close();
-							Swal.fire({
-								icon: 'error',
-								title: 'Error',
-								text: 'Failed to load item profile. Please try again.'
-							});
-						}
-					});
-
-					document.body.style.overflow = 'visible';
-				}
-			});
-		});
-		$('#btnapplyquality').click(function(){
-			var formData = new FormData($('#qualityform')[0]);
-
-			var productid = $('#hideproductid').val();
-			formData.append('productid', productid);
-
-			$.ajax({
-				url: '<?php echo base_url() ?>Product/Productconditioninsertupdate',
-				type: 'POST',
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: function(response){
-					var obj = JSON.parse(response);
-
-					if(obj.status == 1){
-
-						$('#porderviewmodal').modal('hide');
-
-						Swal.fire({
-							icon: 'success',
-							title: 'Saved Successfully!',
-							text: 'Product conditions saved.',
-							timer: 3000,
-							showConfirmButton: false,
-							timerProgressBar: true
-						}).then(() => {
-							window.location.reload();
-						});
-
-					} else {
-
-						Swal.fire({
-							icon: 'error',
-							title: 'Error!',
-							text: 'Something went wrong.',
-							timer: 3000,
-							showConfirmButton: false
-						});
-
-					}
-
-					action(obj.action);
-				}
-			});
-		});
 		$('#productdataTable tbody').on('click', '.btnStockAdd', function () {
 			var id = $(this).attr('id');
 			$('#hidestockproductid').val(id);

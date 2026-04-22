@@ -782,8 +782,7 @@ class Productinfo extends CI_Model{
         
         echo $html;
     }
-
-    public function Productconditionform(){
+        public function Productconditionform(){
         $recordID=$this->input->post('recordID');
 
         // Get product information
@@ -792,12 +791,16 @@ class Productinfo extends CI_Model{
 
         $html='';
 
+        // Start form with correct ID
+        $html .= '<form id="qualityform" method="post">';
+
         // Product header fields
         $html.='
         <div class="form-row">
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT NAME</label>
                 <input type="text" name="productname" id="productname" class="form-control form-control-sm" value="'.$respond->row(0)->prodcutname.'" readonly>
+                <input type="hidden" name="productid" id="productid" value="'.$respond->row(0)->idtbl_product.'">
             </div>
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT CODE</label>
@@ -866,207 +869,110 @@ class Productinfo extends CI_Model{
 
         echo $html;
     }
-
-    public function insertProductConditions($data){
+    public function Productconditioninsertupdate(){
         $this->db->trans_begin();
 
-        $product_id = $data['productid'];
-        $user_id = $this->session->userdata('userid');
+        $userID = isset($_SESSION['userid']) ? $_SESSION['userid'] : '';
+        $product_id = $this->input->post('productid'); // Product ID from the hidden field
 
-        foreach($data as $key => $value){
-            if($key == 'productid' || $key == 'productname' || $key == 'productcode' || $key == 'hideproductid'){
+        $updatedatetime = date('Y-m-d H:i:s');
+
+        // Debug: Log received data
+        log_message('debug', 'Productconditioninsertupdate - UserID: ' . $userID . ', ProductID: ' . $product_id);
+        log_message('debug', 'POST data: ' . print_r($this->input->post(), true));
+
+        // Validate required data
+        if(empty($userID) || empty($product_id)) {
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-warning';
+            $actionObj->title = '';
+            $actionObj->message = 'Invalid user or product data - UserID: ' . $userID . ', ProductID: ' . $product_id;
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'danger';
+            $actionObj->status = 0;
+
+            echo json_encode($actionObj);
+            return;
+        }
+
+        // Get all form data except the product info fields
+        $formData = $this->input->post();
+
+        // Remove system fields that shouldn't be saved as parameters
+        $excludeFields = ['productid', 'productname', 'productcode', 'grnqty', 'itemdesc'];
+
+        // First, mark existing conditions for this product as inactive (status = 0)
+        $this->db->where('tbl_product_idtbl_product', $product_id);
+        $this->db->update('tbl_product_condition', array('status' => 0, 'updateuser' => $userID, 'updatedatetime' => $updatedatetime));
+
+        // Insert new condition records
+        $insertedCount = 0;
+        foreach($formData as $fieldName => $fieldValue) {
+            // Skip excluded fields and empty values
+            if(in_array($fieldName, $excludeFields) || $fieldValue === '' || $fieldValue === null) {
                 continue;
             }
-            if($value === null || $value === ''){
-                $value = 0;
-            }
 
-            $insert = [
-                'parameter' => $key,
-                'value' => $value,
+            // Convert field name back to readable format for storage
+            $parameterName = ucwords(str_replace('_', ' ', $fieldName));
+
+            $data = array(
+                'parameter' => $parameterName,
+                'value' => $fieldValue,
                 'status' => 1,
-                'insertdatetime' => date('Y-m-d H:i:s'),
-                'tbl_user_idtbl_user' => $user_id,
+                'insertdatetime' => $updatedatetime,
+                'tbl_user_idtbl_user' => $userID,
                 'tbl_product_idtbl_product' => $product_id
-            ];
+            );
 
-            $this->db->insert('tbl_product_condition', $insert);
+            if($this->db->insert('tbl_product_condition', $data)) {
+                $insertedCount++;
+            } else {
+                // Log the error for debugging
+                log_message('error', 'Failed to insert product condition: ' . $this->db->error()['message']);
+            }
         }
 
-        if ($this->db->trans_status() === FALSE){
-            $this->db->trans_rollback();
-            return false;
-        } else {
+        $this->db->trans_complete();
+
+        if ($this->db->trans_status() === TRUE && $insertedCount > 0) {
             $this->db->trans_commit();
-            return true;
-        }
-    }
 
-    public function Productconditionprofile(){
-        $product_id = $this->input->post('productid');
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-save';
+            $actionObj->title = '';
+            $actionObj->message = 'Quality conditions saved successfully (' . $insertedCount . ' parameters)';
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'success';
+            $actionObj->status = 1;
 
-        $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
-                        FROM `tbl_product`
-                        WHERE `idtbl_product` = ? AND `status` = 1";
-        $product = $this->db->query($sql_product, array($product_id))->row();
+            $actionJSON = json_encode($actionObj);
 
-        $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
-                          FROM `tbl_product_condition`
-                          WHERE `tbl_product_idtbl_product` = ? AND `status` = 1
-                          ORDER BY `insertdatetime` DESC";
-        $conditions = $this->db->query($sql_conditions, array($product_id))->result();
-
-        $html = '';
-        $html .= '<div class="container-fluid">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-12 mb-4">';
-        $html .= '<div class="card shadow-lg border-0">';
-        $html .= '<div class="card-header bg-gradient-primary text-white">';
-        $html .= '<div class="d-flex align-items-center">';
-        $html .= '<div class="mr-3">';
-        $html .= '<i class="fas fa-box-open fa-2x"></i>';
-        $html .= '</div>';
-        $html .= '<div>';
-        $html .= '<h4 class="mb-0 font-weight-bold">ITEM QUALITY PROFILE</h4>';
-        $html .= '<small class="text-white-50">Product Code: ' . htmlspecialchars($product->productcode) . '</small>';
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="card-body">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-md-4 text-center">';
-        if(!empty($product->productimg)) {
-            $html .= '<img src="' . base_url($product->productimg) . '" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Product Image">';
+            echo $actionJSON;
         } else {
-            $html .= '<div class="bg-light rounded p-4 d-flex align-items-center justify-content-center" style="height: 200px;">';
-            $html .= '<i class="fas fa-image fa-3x text-muted"></i>';
-            $html .= '</div>';
-        }
-        $html .= '</div>';
+            $this->db->trans_rollback();
 
-        $html .= '<div class="col-md-8">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">PRODUCT NAME</label>';
-        $html .= '<p class="h5 text-dark mb-0">' . htmlspecialchars($product->prodcutname) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">PRODUCT CODE</label>';
-        $html .= '<p class="h5 text-dark mb-0">' . htmlspecialchars($product->productcode) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">WEIGHT</label>';
-        $html .= '<p class="h6 text-dark mb-0">' . htmlspecialchars($product->weight) . ' kg</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">RETAIL PRICE</label>';
-        $html .= '<p class="h6 text-success font-weight-bold mb-0">Rs. ' . number_format($product->retailprice, 2) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        if(!empty($product->desc)) {
-            $html .= '<div class="col-12">';
-            $html .= '<div class="mb-3">';
-            $html .= '<label class="text-muted small font-weight-bold">DESCRIPTION</label>';
-            $html .= '<p class="text-dark mb-0">' . htmlspecialchars($product->desc) . '</p>';
-            $html .= '</div>';
-            $html .= '</div>';
-        }
-
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        if(!empty($conditions)) {
-            $html .= '<div class="row">';
-            $html .= '<div class="col-12">';
-            $html .= '<div class="card shadow-lg border-0">';
-            $html .= '<div class="card-header bg-gradient-success text-white">';
-            $html .= '<div class="d-flex align-items-center">';
-            $html .= '<div class="mr-3">';
-            $html .= '<i class="fas fa-check-circle fa-2x"></i>';
-            $html .= '</div>';
-            $html .= '<div>';
-            $html .= '<h5 class="mb-0 font-weight-bold">QUALITY PARAMETERS</h5>';
-            $html .= '<small class="text-white-50">Last updated: ' . date('M d, Y H:i', strtotime($conditions[0]->insertdatetime)) . '</small>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-
-            $html .= '<div class="card-body">';
-            $html .= '<div class="row">';
-
-            foreach($conditions as $condition) {
-                $html .= '<div class="col-md-6 col-lg-4 mb-3">';
-                $html .= '<div class="card h-100 border-left-primary shadow-sm">';
-                $html .= '<div class="card-body p-3">';
-
-                $html .= '<h6 class="card-title text-primary font-weight-bold mb-2">';
-                $html .= '<i class="fas fa-tag mr-2"></i>' . htmlspecialchars($condition->parameter);
-                $html .= '</h6>';
-                $html .= '<div class="d-flex align-items-center">';
-
-                if(strtolower($condition->value) === '1' || strtolower($condition->value) === 'yes') {
-                    $html .= '<span class="badge badge-success badge-pill mr-2">';
-                    $html .= '<i class="fas fa-check"></i>';
-                    $html .= '</span>';
-                    $html .= '<span class="text-success font-weight-bold">PASS</span>';
-                } elseif(strtolower($condition->value) === '0' || strtolower($condition->value) === 'no') {
-                    $html .= '<span class="badge badge-danger badge-pill mr-2">';
-                    $html .= '<i class="fas fa-times"></i>';
-                    $html .= '</span>';
-                    $html .= '<span class="text-danger font-weight-bold">FAIL</span>';
-                } else {
-                    $html .= '<span class="text-dark">' . htmlspecialchars($condition->value) . '</span>';
-                }
-
-                $html .= '</div>';
-
-                $html .= '</div>';
-                $html .= '</div>';
-                $html .= '</div>';
+            // Get more detailed error information
+            $error = $this->db->error();
+            $errorMessage = 'Error saving quality conditions';
+            if($error && isset($error['message'])) {
+                $errorMessage .= ': ' . $error['message'];
             }
 
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-        } else {
-            $html .= '<div class="row">';
-            $html .= '<div class="col-12">';
-            $html .= '<div class="card shadow-lg border-0">';
-            $html .= '<div class="card-body text-center py-5">';
-            $html .= '<i class="fas fa-info-circle fa-3x text-muted mb-3"></i>';
-            $html .= '<h5 class="text-muted">No Quality Parameters Found</h5>';
-            $html .= '<p class="text-muted">Quality conditions have not been set for this product yet.</p>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
+            $actionObj = new stdClass();
+            $actionObj->icon = 'fas fa-warning';
+            $actionObj->title = '';
+            $actionObj->message = $errorMessage;
+            $actionObj->url = '';
+            $actionObj->target = '_blank';
+            $actionObj->type = 'danger';
+            $actionObj->status = 0;
+
+            $actionJSON = json_encode($actionObj);
+
+            echo $actionJSON;
         }
-
-        $html .= '</div>';
-        $html .= '</div>';
-
-        echo $html;
     }
 }
