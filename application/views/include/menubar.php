@@ -491,18 +491,29 @@ else if($controllermenu=='Productionwastage'){
     $deletecheck=checkprivilege($menuprivilegearray, 80, 4);
 }
 else if($controllermenu=='Drier'){
-    $addcheck=checkprivilege($menuprivilegearray, 81, 1);
-    $editcheck=checkprivilege($menuprivilegearray, 81, 2);
-    $statuscheck=checkprivilege($menuprivilegearray, 81, 3);
-    $deletecheck=checkprivilege($menuprivilegearray, 81, 4);
+    $addcheck=checkprivilege($menuprivilegearray, 80, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 80, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 80, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 80, 4);
 }
 else if($controllermenu=='WaterBath'){
-    $addcheck=checkprivilege($menuprivilegearray, 82, 1);
-    $editcheck=checkprivilege($menuprivilegearray, 82, 2);
-    $statuscheck=checkprivilege($menuprivilegearray, 82, 3);
-    $deletecheck=checkprivilege($menuprivilegearray, 82, 4);
+    $addcheck=checkprivilege($menuprivilegearray, 80, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 80, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 80, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 80, 4);
 }
-
+else if($controllermenu=='Rptdriertemp'){
+    $addcheck=checkprivilege($menuprivilegearray, 83, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 83, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 83, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 83, 4);
+}
+else if($controllermenu=='Rptwaterbath'){
+    $addcheck=checkprivilege($menuprivilegearray, 84, 1);
+    $editcheck=checkprivilege($menuprivilegearray, 84, 2);
+    $statuscheck=checkprivilege($menuprivilegearray, 84, 3);
+    $deletecheck=checkprivilege($menuprivilegearray, 84, 4);
+}
 
 function checkprivilege($arraymenu, $menuID, $type){
     foreach($arraymenu as $array){
@@ -534,13 +545,13 @@ function checkprivilege($arraymenu, $menuID, $type){
                 <div class="nav-link-icon"><i class="fas fa-desktop"></i></div>
                 Dashboard
             </a>
-            <?php if(menucheck($menuprivilegearray, 35)==1 | menucheck($menuprivilegearray, 36)==1 | menucheck($menuprivilegearray, 49)==1 | menucheck($menuprivilegearray, 37)==1 | menucheck($menuprivilegearray, 47)==1 | menucheck($menuprivilegearray, 48)==1 | menucheck($menuprivilegearray, 50)==1 | menucheck($menuprivilegearray, 58)==1 | menucheck($menuprivilegearray, 59)==1 | menucheck($menuprivilegearray, 63)==1 | menucheck($menuprivilegearray, 65)==1 | menucheck($menuprivilegearray, 69)==1 | menucheck($menuprivilegearray, 70)==1){ ?>
+            <?php if(menucheck($menuprivilegearray, 35)==1 | menucheck($menuprivilegearray, 36)==1 | menucheck($menuprivilegearray, 49)==1 | menucheck($menuprivilegearray, 37)==1 | menucheck($menuprivilegearray, 47)==1 | menucheck($menuprivilegearray, 48)==1 | menucheck($menuprivilegearray, 50)==1 | menucheck($menuprivilegearray, 58)==1 | menucheck($menuprivilegearray, 59)==1 | menucheck($menuprivilegearray, 63)==1 | menucheck($menuprivilegearray, 65)==1 | menucheck($menuprivilegearray, 69)==1 | menucheck($menuprivilegearray, 70)==1 | menucheck($menuprivilegearray, 83)==1 | menucheck($menuprivilegearray, 84)==1){ ?>
             <a class="nav-link p-0 px-3 py-2 collapsed text-dark" href="javascript:void(0);" data-toggle="collapse" data-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
                 <div class="nav-link-icon"><i class="fas fa-file-alt"></i></div>
                 Reports
                 <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
             </a>
-            <div class="collapse <?php if($controllermenu=="RptGRN" | $controllermenu=="Rptmatstock" | $controllermenu=="Rptfgstock" | $controllermenu=="Rptsalesorder" | $controllermenu=="Rptproductwisesales" | $controllermenu=="Rptbuyerwisesales" | $controllermenu=="Rptsemiproduct" | $controllermenu=="Rptmatstockbatchwise" | $controllermenu=="Rptfgstockbatchwise" | $controllermenu=="Rptinvoicesummary" | $controllermenu=="Rptmaterialtransaction" | $controllermenu=="Rptstocksummery" | $controllermenu=="Rptsemimaterialsummery"){echo 'show';} ?>" id="collapseReports" data-parent="#accordionSidenav">
+            <div class="collapse <?php if($controllermenu=="RptGRN" | $controllermenu=="Rptmatstock" | $controllermenu=="Rptfgstock" | $controllermenu=="Rptsalesorder" | $controllermenu=="Rptproductwisesales" | $controllermenu=="Rptbuyerwisesales" | $controllermenu=="Rptsemiproduct" | $controllermenu=="Rptmatstockbatchwise" | $controllermenu=="Rptfgstockbatchwise" | $controllermenu=="Rptinvoicesummary" | $controllermenu=="Rptmaterialtransaction" | $controllermenu=="Rptstocksummery" | $controllermenu=="Rptsemimaterialsummery" | $controllermenu=="Rptdriertemp" | $controllermenu=="Rptwaterbath"){echo 'show';} ?>" id="collapseReports" data-parent="#accordionSidenav">
                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
                     <!-- <?php //if(menucheck($menuprivilegearray, 35)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'RptGRN'; ?>">GRN Report</a> -->
@@ -568,6 +579,10 @@ function checkprivilege($arraymenu, $menuID, $type){
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Rptstocksummery'; ?>">Stock Summery Report</a>
                     <?php //} if(menucheck($menuprivilegearray, 70)==1){ ?>
                     <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Rptsemimaterialsummery'; ?>">Semi Summery Report</a> -->
+                    <?php } if(menucheck($menuprivilegearray, 83)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Rptdriertemp'; ?>">Drier Temperature Report</a>
+                    <?php } if(menucheck($menuprivilegearray, 84)==1){ ?>
+                    <a class="nav-link p-0 px-3 py-1 text-dark" href="<?php echo base_url().'Rptwaterbath'; ?>">Water Bath Report</a>
                     <?php } ?>
                 </nav>
             </div>
@@ -596,12 +611,12 @@ function checkprivilege($arraymenu, $menuID, $type){
                 <div class="nav-link-icon"><i class="fas fa-shopping-basket"></i></div>
                 Production Wastage 
             </a>
-            <?php } if(menucheck($menuprivilegearray, 81)==1){ ?> 
+            <?php } if(menucheck($menuprivilegearray, 80)==1){ ?> 
             <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'Drier'; ?>">
                 <div class="nav-link-icon"><i class="fas fa-wind"></i></div>
                 Drier
             </a>
-            <?php } if(menucheck($menuprivilegearray, 82)==1){ ?> 
+            <?php } if(menucheck($menuprivilegearray, 80)==1){ ?> 
             <a class="nav-link p-0 px-3 py-2 text-dark" href="<?php echo base_url().'WaterBath'; ?>">
                 <div class="nav-link-icon"><i class="fas fa-water"></i></div>
                 Water Bath
