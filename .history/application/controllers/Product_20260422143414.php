@@ -61,15 +61,13 @@ class Product extends CI_Controller {
 	public function Productconditioninsertupdate(){
 		$this->load->model('Productinfo');
 		$data = $this->input->post();
+
 		$result = $this->Productinfo->insertProductConditions($data);
+
 		if($result){
 			echo json_encode(['status' => 1, 'action' => 'saved']);
 		} else {
 			echo json_encode(['status' => 0, 'action' => 'error']);
 		}
-	}
-	public function Productconditionprofile(){
-		$this->load->model('Productinfo');
-        $result=$this->Productinfo->Productconditionprofile();
 	}
 }

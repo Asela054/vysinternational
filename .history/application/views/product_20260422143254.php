@@ -423,8 +423,7 @@ include "include/topnavbar.php";
 					"render": function (data, type, full) {
 						var button = '';
 						button+='<button class="btn btn-dark btn-sm btnViewFinishGood mr-1" data-toggle="tooltip" data-placement="bottom" title="Cost Info" id="'+full['idtbl_product']+'"><i class="fas fa-file"></i></button>';
-						button+='<button type="button" class="btn btn-secondary btn-sm btncheck mr-1" data-toggle="tooltip" data-placement="bottom" title="Quality Check" id="'+full['idtbl_product']+'"><i class="fas fa-tasks"></i></button>';
-						button+='<button type="button" class="btn btn-info btn-sm btnViewProfile mr-1" data-toggle="tooltip" data-placement="bottom" title="View Profile" id="'+full['idtbl_product']+'"><i class="fas fa-eye"></i></button>';
+						button+='<button type="button" class="btn btn-secondary btn-sm btncheck mr-1" id="'+full['idtbl_product']+'"><i class="fas fa-tasks"></i></button>';
 						// button+='<button class="btn btn-warning btn-sm btnStockAdd mr-1" data-toggle="tooltip" data-placement="bottom" title="Stock Add" id="'+full['idtbl_product']+'"><i class="fas fa-plus"></i></button>';
                         // button += '<a href="<?php echo base_url() ?>Product/Barcode/'+full['productcode']+'" class="btn btn-dark btn-sm mr-1" target="_blank"><i class="fas fa-barcode"></i></a>';
 						if (editcheck == 1) {
@@ -492,47 +491,6 @@ include "include/topnavbar.php";
         		}
         	});
         });
-		$('#productdataTable tbody').on('click', '.btnViewProfile', function () {
-			var id = $(this).attr('id');
-
-			// Show loading modal
-			Swal.fire({
-				title: 'Loading Profile...',
-				html: '<div class="div-spinner"><div class="custom-loader"></div></div>',
-				allowOutsideClick: false,
-				showConfirmButton: false,
-				backdrop: 'rgba(255, 255, 255, 0.5)',
-				customClass: {
-					popup: 'fullscreen-swal'
-				},
-				didOpen: () => {
-					document.body.style.overflow = 'hidden';
-
-					$.ajax({
-						type: "POST",
-						data: {
-							productid: id
-						},
-						url: '<?php echo base_url() ?>Product/Productconditionprofile',
-						success: function (result) {
-							Swal.close();
-							$('#viewinfo').html(result);
-							$('#viewFinishGood').modal('show');
-						},
-						error: function(error) {
-							Swal.close();
-							Swal.fire({
-								icon: 'error',
-								title: 'Error',
-								text: 'Failed to load item profile. Please try again.'
-							});
-						}
-					});
-
-					document.body.style.overflow = 'visible';
-				}
-			});
-		});
 		$('#btnapplyquality').click(function(){
 			var formData = new FormData($('#qualityform')[0]);
 
@@ -569,7 +527,7 @@ include "include/topnavbar.php";
 							icon: 'error',
 							title: 'Error!',
 							text: 'Something went wrong.',
-							timer: 3000,
+							timer: 2000,
 							showConfirmButton: false
 						});
 

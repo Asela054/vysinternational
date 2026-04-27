@@ -798,6 +798,7 @@ class Productinfo extends CI_Model{
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT NAME</label>
                 <input type="text" name="productname" id="productname" class="form-control form-control-sm" value="'.$respond->row(0)->prodcutname.'" readonly>
+                <input type="hidden" name="productid" id="productid" value="'.$respond->row(0)->idtbl_product.'">
             </div>
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT CODE</label>
@@ -864,6 +865,18 @@ class Productinfo extends CI_Model{
             $html .= '</div>';
         }
 
+        // Action buttons
+        $html .= '<div class="form-row mt-4">';
+        $html .= '    <div class="col-12 text-center">';
+        $html .= '        <button type="button" id="btnapplyquality" class="btn btn-success btn-lg mr-3">';
+        $html .= '            <i class="fas fa-save"></i> Save Quality Conditions';
+        $html .= '        </button>';
+        $html .= '        <button type="button" id="btnviewprofile" class="btn btn-info btn-lg">';
+        $html .= '            <i class="fas fa-eye"></i> View Item Profile';
+        $html .= '        </button>';
+        $html .= '    </div>';
+        $html .= '</div>';
+
         echo $html;
     }
 
@@ -905,11 +918,13 @@ class Productinfo extends CI_Model{
     public function Productconditionprofile(){
         $product_id = $this->input->post('productid');
 
+        // Get product information
         $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
                         FROM `tbl_product`
                         WHERE `idtbl_product` = ? AND `status` = 1";
         $product = $this->db->query($sql_product, array($product_id))->row();
 
+        // Get quality conditions
         $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
                           FROM `tbl_product_condition`
                           WHERE `tbl_product_idtbl_product` = ? AND `status` = 1
@@ -917,9 +932,12 @@ class Productinfo extends CI_Model{
         $conditions = $this->db->query($sql_conditions, array($product_id))->result();
 
         $html = '';
+
+        // Professional Item Profile Layout
         $html .= '<div class="container-fluid">';
         $html .= '<div class="row">';
 
+        // Product Header Section
         $html .= '<div class="col-12 mb-4">';
         $html .= '<div class="card shadow-lg border-0">';
         $html .= '<div class="card-header bg-gradient-primary text-white">';
@@ -937,6 +955,7 @@ class Productinfo extends CI_Model{
         $html .= '<div class="card-body">';
         $html .= '<div class="row">';
 
+        // Product Image
         $html .= '<div class="col-md-4 text-center">';
         if(!empty($product->productimg)) {
             $html .= '<img src="' . base_url($product->productimg) . '" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Product Image">';
@@ -947,6 +966,7 @@ class Productinfo extends CI_Model{
         }
         $html .= '</div>';
 
+        // Product Details
         $html .= '<div class="col-md-8">';
         $html .= '<div class="row">';
 
@@ -995,6 +1015,7 @@ class Productinfo extends CI_Model{
         $html .= '</div>';
         $html .= '</div>';
 
+        // Quality Parameters Section
         if(!empty($conditions)) {
             $html .= '<div class="row">';
             $html .= '<div class="col-12">';
@@ -1019,9 +1040,12 @@ class Productinfo extends CI_Model{
                 $html .= '<div class="card h-100 border-left-primary shadow-sm">';
                 $html .= '<div class="card-body p-3">';
 
+                // Parameter name
                 $html .= '<h6 class="card-title text-primary font-weight-bold mb-2">';
                 $html .= '<i class="fas fa-tag mr-2"></i>' . htmlspecialchars($condition->parameter);
                 $html .= '</h6>';
+
+                // Parameter value with appropriate styling
                 $html .= '<div class="d-flex align-items-center">';
 
                 if(strtolower($condition->value) === '1' || strtolower($condition->value) === 'yes') {
@@ -1051,6 +1075,7 @@ class Productinfo extends CI_Model{
             $html .= '</div>';
             $html .= '</div>';
         } else {
+            // No quality conditions found
             $html .= '<div class="row">';
             $html .= '<div class="col-12">';
             $html .= '<div class="card shadow-lg border-0">';

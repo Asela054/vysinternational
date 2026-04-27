@@ -59,17 +59,8 @@ class Product extends CI_Controller {
         $result=$this->Productinfo->Productconditionform();
 	}
 	public function Productconditioninsertupdate(){
+		$this->load->library('session');
 		$this->load->model('Productinfo');
-		$data = $this->input->post();
-		$result = $this->Productinfo->insertProductConditions($data);
-		if($result){
-			echo json_encode(['status' => 1, 'action' => 'saved']);
-		} else {
-			echo json_encode(['status' => 0, 'action' => 'error']);
-		}
-	}
-	public function Productconditionprofile(){
-		$this->load->model('Productinfo');
-        $result=$this->Productinfo->Productconditionprofile();
+        $result=$this->Productinfo->Productconditioninsertupdate();
 	}
 }

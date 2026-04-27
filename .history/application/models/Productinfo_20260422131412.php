@@ -782,27 +782,50 @@ class Productinfo extends CI_Model{
         
         echo $html;
     }
-
-    public function Productconditionform(){
+        public function Productconditionform(){
         $recordID=$this->input->post('recordID');
 
-        // Get product information
-        $sql="SELECT `idtbl_product`, `prodcutname`, `productcode` FROM `tbl_product` WHERE `status`=? AND `idtbl_product`=?";
+        $sql="SELECT `prodcutname`, `productcode` FROM `tbl_product` WHERE `status`=? AND `idtbl_product`=?";
         $respond=$this->db->query($sql, array(1, $recordID));
 
+        $sqlmaterial="SELECT `tbl_material_info`.`materialinfocode`, `tbl_material_info`.`idtbl_material_info`, `tbl_material_code`.`materialname`
+        FROM `tbl_material_info`
+        LEFT JOIN `tbl_material_code` ON `tbl_material_code`.`idtbl_material_code`=`tbl_material_info`.`tbl_material_code_idtbl_material_code`
+        LEFT JOIN `tbl_grndetail` ON `tbl_grndetail`.`tbl_material_info_idtbl_material_info`=`tbl_material_info`.`idtbl_material_info`
+        WHERE `tbl_grndetail`.`status`=? AND `tbl_grndetail`.`tbl_grn_idtbl_grn`=? 
+        AND `tbl_material_info`.`idtbl_material_info` NOT IN (SELECT `tbl_material_info_idtbl_material_info` FROM `tbl_grn_quality` WHERE `status`=? AND `tbl_grn_idtbl_grn`=?)";
+        $respondmaterial=$this->db->query($sqlmaterial, array(1, $recordID, 1, $recordID));
+
+        $r=1;
         $html='';
 
-        // Product header fields
         $html.='
         <div class="form-row">
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT NAME</label>
-                <input type="text" name="productname" id="productname" class="form-control form-control-sm" value="'.$respond->row(0)->prodcutname.'" readonly>
+                <input type="text" name="productname" id="productname" class="form-control form-control-sm" value="'.$respondgrn->row(0)->prodcutname.'" readonly>
             </div>
             <div class="col">
                 <label class="small font-weight-bold text-dark">PRODUCT CODE</label>
-                <input type="text" name="productcode" id="productcode" class="form-control form-control-sm" value="'.$respond->row(0)->productcode.'" readonly>
+                <input type="text" name="productcode" id="productcode" class="form-control form-control-sm" value="'.$respondgrn->row(0)->productcode.'" readonly>
             </div>
+        </div>
+        <div class="form-row">
+            <div class="col">
+                <label class="small font-weight-bold text-dark">Material</label>
+                <select name="materialinfo" id="materialinfo" class="form-control form-control-sm">
+                    <option value="">Select</option>';
+                    foreach($respondmaterial->result() AS $rowmateriallist){
+                        $html.='<option value="'.$rowmateriallist->idtbl_material_info.'">'.$rowmateriallist->materialname.' - '.$rowmateriallist->materialinfocode.'</option>';
+                    }
+                $html.='</select>
+            </div>
+        </div>
+        <div class="form-row">
+        	<div class="col">
+        		<label class="small font-weight-bold text-dark">GRN QUANTITY</label>
+        		<input type="text" name="grnqty" id="grnqty" class="form-control form-control-sm" value="" readonly>
+        	</div>
         </div>
         <div class="form-row">
         	<div class="col">
@@ -811,261 +834,72 @@ class Productinfo extends CI_Model{
         	</div>
         </div>
         ';
-
-        $sql_quality = "SELECT `idtbl_quality_subcategory`, `qualitysubcategory`, `inputtype`, `status` 
-                        FROM `tbl_quality_subcategory` 
-                        WHERE `status` = 1
-                        ORDER BY `idtbl_quality_subcategory` ASC";
-        $quality_fields = $this->db->query($sql_quality)->result();
-
-        foreach($quality_fields as $field) {
-            $field_name = strtolower(str_replace(' ', '_', $field->qualitysubcategory));
-            $field_id = 'quality_' . $field->idtbl_quality_subcategory;
-            
-            $html .= '<div class="form-row">';
-            $html .= '    <div class="col">';
-            $html .= '        <label class="small font-weight-bold text-dark">' . htmlspecialchars($field->qualitysubcategory) . '</label>';
-
-            // Generate input based on type
-            // 1 = text input, 2 = radio, 3 = checkbox, 4 = textarea
-            if($field->inputtype == 1) {
-                // Text input
-                $html .= '        <input type="text" name="' . $field_name . '" id="' . $field_id . '" class="form-control form-control-sm">';
-            }
-            elseif($field->inputtype == 2) {
-                // Radio buttons
-                $html .= '        <br>';
-                $html .= '        <div class="custom-control custom-radio custom-control-inline">';
-                $html .= '            <input type="radio" id="' . $field_id . '_1" name="' . $field_name . '" class="custom-control-input" value="1">';
-                $html .= '            <label class="custom-control-label" for="' . $field_id . '_1">Yes</label>';
-                $html .= '        </div>';
-                $html .= '        <div class="custom-control custom-radio custom-control-inline">';
-                $html .= '            <input type="radio" id="' . $field_id . '_0" name="' . $field_name . '" class="custom-control-input" value="0" checked>';
-                $html .= '            <label class="custom-control-label" for="' . $field_id . '_0">No</label>';
-                $html .= '        </div>';
-            }
-            elseif($field->inputtype == 3) {
-                // Checkbox
-                $html .= '        <div class="custom-control custom-checkbox">';
-                $html .= '            <input type="checkbox" name="' . $field_name . '" id="' . $field_id . '" class="custom-control-input" value="1">';
-                $html .= '            <label class="custom-control-label" for="' . $field_id . '">Confirmed</label>';
-                $html .= '        </div>';
-            }
-            elseif($field->inputtype == 4) {
-                // Textarea
-                $html .= '        <textarea name="' . $field_name . '" id="' . $field_id . '" class="form-control form-control-sm" rows="3"></textarea>';
-            }
-            elseif($field->inputtype == 5) {
-                // Date time picker
-                $html .= '        <input type="datetime-local" name="' . $field_name . '" id="' . $field_id . '" class="form-control form-control-sm">';
-            }
-
-            $html .= '    </div>';
-            $html .= '</div>';
-        }
-
-        echo $html;
-    }
-
-    public function insertProductConditions($data){
-        $this->db->trans_begin();
-
-        $product_id = $data['productid'];
-        $user_id = $this->session->userdata('userid');
-
-        foreach($data as $key => $value){
-            if($key == 'productid' || $key == 'productname' || $key == 'productcode' || $key == 'hideproductid'){
-                continue;
-            }
-            if($value === null || $value === ''){
-                $value = 0;
-            }
-
-            $insert = [
-                'parameter' => $key,
-                'value' => $value,
-                'status' => 1,
-                'insertdatetime' => date('Y-m-d H:i:s'),
-                'tbl_user_idtbl_user' => $user_id,
-                'tbl_product_idtbl_product' => $product_id
-            ];
-
-            $this->db->insert('tbl_product_condition', $insert);
-        }
-
-        if ($this->db->trans_status() === FALSE){
-            $this->db->trans_rollback();
-            return false;
-        } else {
-            $this->db->trans_commit();
-            return true;
-        }
-    }
-
-    public function Productconditionprofile(){
-        $product_id = $this->input->post('productid');
-
-        $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
-                        FROM `tbl_product`
-                        WHERE `idtbl_product` = ? AND `status` = 1";
-        $product = $this->db->query($sql_product, array($product_id))->row();
-
-        $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
-                          FROM `tbl_product_condition`
-                          WHERE `tbl_product_idtbl_product` = ? AND `status` = 1
-                          ORDER BY `insertdatetime` DESC";
-        $conditions = $this->db->query($sql_conditions, array($product_id))->result();
-
-        $html = '';
-        $html .= '<div class="container-fluid">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-12 mb-4">';
-        $html .= '<div class="card shadow-lg border-0">';
-        $html .= '<div class="card-header bg-gradient-primary text-white">';
-        $html .= '<div class="d-flex align-items-center">';
-        $html .= '<div class="mr-3">';
-        $html .= '<i class="fas fa-box-open fa-2x"></i>';
-        $html .= '</div>';
-        $html .= '<div>';
-        $html .= '<h4 class="mb-0 font-weight-bold">ITEM QUALITY PROFILE</h4>';
-        $html .= '<small class="text-white-50">Product Code: ' . htmlspecialchars($product->productcode) . '</small>';
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="card-body">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-md-4 text-center">';
-        if(!empty($product->productimg)) {
-            $html .= '<img src="' . base_url($product->productimg) . '" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Product Image">';
-        } else {
-            $html .= '<div class="bg-light rounded p-4 d-flex align-items-center justify-content-center" style="height: 200px;">';
-            $html .= '<i class="fas fa-image fa-3x text-muted"></i>';
-            $html .= '</div>';
-        }
-        $html .= '</div>';
-
-        $html .= '<div class="col-md-8">';
-        $html .= '<div class="row">';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">PRODUCT NAME</label>';
-        $html .= '<p class="h5 text-dark mb-0">' . htmlspecialchars($product->prodcutname) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">PRODUCT CODE</label>';
-        $html .= '<p class="h5 text-dark mb-0">' . htmlspecialchars($product->productcode) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">WEIGHT</label>';
-        $html .= '<p class="h6 text-dark mb-0">' . htmlspecialchars($product->weight) . ' kg</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '<div class="col-sm-6">';
-        $html .= '<div class="mb-3">';
-        $html .= '<label class="text-muted small font-weight-bold">RETAIL PRICE</label>';
-        $html .= '<p class="h6 text-success font-weight-bold mb-0">Rs. ' . number_format($product->retailprice, 2) . '</p>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        if(!empty($product->desc)) {
-            $html .= '<div class="col-12">';
-            $html .= '<div class="mb-3">';
-            $html .= '<label class="text-muted small font-weight-bold">DESCRIPTION</label>';
-            $html .= '<p class="text-dark mb-0">' . htmlspecialchars($product->desc) . '</p>';
-            $html .= '</div>';
-            $html .= '</div>';
-        }
-
-        $html .= '</div>';
-        $html .= '</div>';
-
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-        $html .= '</div>';
-
-        if(!empty($conditions)) {
-            $html .= '<div class="row">';
-            $html .= '<div class="col-12">';
-            $html .= '<div class="card shadow-lg border-0">';
-            $html .= '<div class="card-header bg-gradient-success text-white">';
-            $html .= '<div class="d-flex align-items-center">';
-            $html .= '<div class="mr-3">';
-            $html .= '<i class="fas fa-check-circle fa-2x"></i>';
-            $html .= '</div>';
-            $html .= '<div>';
-            $html .= '<h5 class="mb-0 font-weight-bold">QUALITY PARAMETERS</h5>';
-            $html .= '<small class="text-white-50">Last updated: ' . date('M d, Y H:i', strtotime($conditions[0]->insertdatetime)) . '</small>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-
-            $html .= '<div class="card-body">';
-            $html .= '<div class="row">';
-
-            foreach($conditions as $condition) {
-                $html .= '<div class="col-md-6 col-lg-4 mb-3">';
-                $html .= '<div class="card h-100 border-left-primary shadow-sm">';
-                $html .= '<div class="card-body p-3">';
-
-                $html .= '<h6 class="card-title text-primary font-weight-bold mb-2">';
-                $html .= '<i class="fas fa-tag mr-2"></i>' . htmlspecialchars($condition->parameter);
-                $html .= '</h6>';
-                $html .= '<div class="d-flex align-items-center">';
-
-                if(strtolower($condition->value) === '1' || strtolower($condition->value) === 'yes') {
-                    $html .= '<span class="badge badge-success badge-pill mr-2">';
-                    $html .= '<i class="fas fa-check"></i>';
-                    $html .= '</span>';
-                    $html .= '<span class="text-success font-weight-bold">PASS</span>';
-                } elseif(strtolower($condition->value) === '0' || strtolower($condition->value) === 'no') {
-                    $html .= '<span class="badge badge-danger badge-pill mr-2">';
-                    $html .= '<i class="fas fa-times"></i>';
-                    $html .= '</span>';
-                    $html .= '<span class="text-danger font-weight-bold">FAIL</span>';
-                } else {
-                    $html .= '<span class="text-dark">' . htmlspecialchars($condition->value) . '</span>';
-                }
-
-                $html .= '</div>';
-
-                $html .= '</div>';
-                $html .= '</div>';
-                $html .= '</div>';
-            }
-
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-        } else {
-            $html .= '<div class="row">';
-            $html .= '<div class="col-12">';
-            $html .= '<div class="card shadow-lg border-0">';
-            $html .= '<div class="card-body text-center py-5">';
-            $html .= '<i class="fas fa-info-circle fa-3x text-muted mb-3"></i>';
-            $html .= '<h5 class="text-muted">No Quality Parameters Found</h5>';
-            $html .= '<p class="text-muted">Quality conditions have not been set for this product yet.</p>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-            $html .= '</div>';
-        }
-
-        $html .= '</div>';
-        $html .= '</div>';
+        $html.='
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">EXAMINED QTY</label>
+                		<input type="text" name="exqty" id="exqty" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">MOISTURE LEVEL%</label>
+                		<input type="text" name="moisture" id="moisture" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">ADULTERING</label>
+                		<input type="text" name="adultering" id="adultering" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">FUNGI & PEST</label>
+                		<input type="text" name="funginfest" id="funginfest" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">COLOR CONFIRMITY</label>
+                		<input type="text" name="color" id="color" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">GRADE</label>
+                		<input type="text" name="grade" id="grade" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">SIZE</label>
+                		<input type="text" name="size" id="size" class="form-control form-control-sm">
+                	</div>
+                </div>
+                <div class="form-row">
+                	<div class="col">
+                		<label class="small font-weight-bold text-dark">PASS/FAIL</label><br>
+                		<div class="custom-control custom-radio custom-control-inline">
+                			<input type="radio" id="passfail1" name="qualityform" class="custom-control-input"
+                				value="1">
+                			<label class="custom-control-label" for="passfail1">PASS</label>
+                		</div>
+                		<div class="custom-control custom-radio custom-control-inline">
+                			<input type="radio" id="passfail2" name="qualityform" class="custom-control-input"
+                				value="0" checked>
+                			<label class="custom-control-label" for="passfail2">FAIL</label>
+                		</div>
+                	</div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        <label class="small font-weight-bold text-dark">COMMENTS</label>
+                        <textarea name="comment" id="comment" class="form-control form-control-sm"></textarea>
+                    </div>
+                </div>
+             
+                ';
 
         echo $html;
     }

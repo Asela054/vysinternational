@@ -68,8 +68,4 @@ class Product extends CI_Controller {
 			echo json_encode(['status' => 0, 'action' => 'error']);
 		}
 	}
-	public function Productconditionprofile(){
-		$this->load->model('Productinfo');
-        $result=$this->Productinfo->Productconditionprofile();
-	}
 }

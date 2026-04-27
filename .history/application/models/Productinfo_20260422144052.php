@@ -905,11 +905,13 @@ class Productinfo extends CI_Model{
     public function Productconditionprofile(){
         $product_id = $this->input->post('productid');
 
+        // Get product information
         $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
                         FROM `tbl_product`
                         WHERE `idtbl_product` = ? AND `status` = 1";
         $product = $this->db->query($sql_product, array($product_id))->row();
 
+        // Get quality conditions
         $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
                           FROM `tbl_product_condition`
                           WHERE `tbl_product_idtbl_product` = ? AND `status` = 1

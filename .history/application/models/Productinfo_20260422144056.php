@@ -905,6 +905,7 @@ class Productinfo extends CI_Model{
     public function Productconditionprofile(){
         $product_id = $this->input->post('productid');
 
+        // Get product information
         $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
                         FROM `tbl_product`
                         WHERE `idtbl_product` = ? AND `status` = 1";

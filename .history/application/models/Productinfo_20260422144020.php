@@ -905,11 +905,13 @@ class Productinfo extends CI_Model{
     public function Productconditionprofile(){
         $product_id = $this->input->post('productid');
 
+        // Get product information
         $sql_product = "SELECT `idtbl_product`, `prodcutname`, `productcode`, `productimg`, `desc`, `weight`, `retailprice`
                         FROM `tbl_product`
                         WHERE `idtbl_product` = ? AND `status` = 1";
         $product = $this->db->query($sql_product, array($product_id))->row();
 
+        // Get quality conditions
         $sql_conditions = "SELECT `parameter`, `value`, `insertdatetime`
                           FROM `tbl_product_condition`
                           WHERE `tbl_product_idtbl_product` = ? AND `status` = 1
@@ -917,9 +919,12 @@ class Productinfo extends CI_Model{
         $conditions = $this->db->query($sql_conditions, array($product_id))->result();
 
         $html = '';
+
+        // Professional Item Profile Layout
         $html .= '<div class="container-fluid">';
         $html .= '<div class="row">';
 
+        // Product Header Section
         $html .= '<div class="col-12 mb-4">';
         $html .= '<div class="card shadow-lg border-0">';
         $html .= '<div class="card-header bg-gradient-primary text-white">';
@@ -937,6 +942,7 @@ class Productinfo extends CI_Model{
         $html .= '<div class="card-body">';
         $html .= '<div class="row">';
 
+        // Product Image
         $html .= '<div class="col-md-4 text-center">';
         if(!empty($product->productimg)) {
             $html .= '<img src="' . base_url($product->productimg) . '" class="img-fluid rounded shadow-sm" style="max-height: 200px;" alt="Product Image">';
@@ -947,6 +953,7 @@ class Productinfo extends CI_Model{
         }
         $html .= '</div>';
 
+        // Product Details
         $html .= '<div class="col-md-8">';
         $html .= '<div class="row">';
 
@@ -995,6 +1002,7 @@ class Productinfo extends CI_Model{
         $html .= '</div>';
         $html .= '</div>';
 
+        // Quality Parameters Section
         if(!empty($conditions)) {
             $html .= '<div class="row">';
             $html .= '<div class="col-12">';
