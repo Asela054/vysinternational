@@ -1,5 +1,13 @@
 <?php
 class Drierinfo extends CI_MODEL{
+        public function getDrier()
+        {
+            $this->db->select('idtbl_drier, name');
+            $this->db->from('tbl_drier');
+            $this->db->where('status', 1);
+
+            return $this->db->get();
+        }
         public function DrierInsertupdate(){
                 $this->db->trans_begin();
 
